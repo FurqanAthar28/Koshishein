@@ -40,18 +40,13 @@ export default function CollectionPage() {
                 will turn it into a beautifully personalized keepsake.
               </p>
 
-              <div className="stitching-price">
-                <strong>PKR 500</strong>
-                <span>per watch</span>
-              </div>
-
               <p className="collection-note">
                 Delivery charges are separate.
               </p>
 
               <Link
                 href={`https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(
-                  "Assalamualaikum, I want to book custom engraving. Engraving PKR 500."
+                  "Assalamualaikum, I want to book custom engraving."
                 )}`}
                 className="primary-button"
                 target="_blank"

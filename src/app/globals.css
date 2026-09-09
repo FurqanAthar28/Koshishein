@@ -94,7 +94,7 @@ p {
 }
 
 .header-inner {
-  min-height: 86px;
+  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -105,59 +105,22 @@ p {
 
 .brand-logo {
   display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  color: var(--color-brown);
+  line-height: 0;
 }
 
 .brand-logo--dark {
   animation: logo-name-reveal 650ms 140ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.brand-logo-name {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 27px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+.brand-logo-image {
+  display: block;
+  width: 320px;
+  height: 25px;
+  object-fit: contain;
 }
 
-.brand-logo-wordmark {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.brand-logo--dark .brand-logo-name {
-  background: linear-gradient(105deg, #3f251c 0%, #71442d 42%, #a36a43 70%, #4d2f23 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-.brand-logo-wave-overlay {
-  position: absolute;
-  width: calc(100% + 16px);
-  height: 24px;
-  top: 50%;
-  left: 50%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.2;
-  stroke-linecap: round;
-  transform: translate(-50%, -50%);
-  opacity: 0.82;
-  pointer-events: none;
-}
-
-.brand-logo--dark .brand-logo-wave-overlay {
-  color: #78482f;
-}
-
-.brand-logo--light {
-  color: var(--color-white);
+.brand-logo--light .brand-logo-image {
+  filter: brightness(0) invert(1);
 }
 
 @keyframes logo-name-reveal {
@@ -397,11 +360,12 @@ p {
   }
 
   .header-inner {
-    min-height: 72px;
+    min-height: 80px;
   }
 
-  .brand-logo-name {
-    font-size: 22px;
+  .brand-logo-image {
+    width: 226px;
+    height: 20px;
   }
 
 

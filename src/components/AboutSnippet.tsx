@@ -30,7 +30,7 @@ export default function AboutSnippet() {
 
           <p>
             Send us your own watch for engraving, or choose from our
-            collection — with personalization starting at just PKR 500.
+            collection with personalization available on every piece.
           </p>
 
           <Link href="/about" className="text-link">

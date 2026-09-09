@@ -3,8 +3,6 @@ const siteConfig = {
 
   tagline: "Timeless watches, chosen with care.",
 
-  engravingPrice: 500,
-
   whatsappNumber: "923298910011",
 
   location: "Khayaban Colony 2,Faisalabad, Pakistan",

@@ -173,7 +173,7 @@ export default async function CatalogPage({
 
           <p>
             Bring your own watch and chosen design. Our team can engrave a
-            beautifully finished keepsake for PKR 500.
+            beautifully finished keepsake.
           </p>
 
           <Link href="/collection" className="primary-button">

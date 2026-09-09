@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 64" role="img" aria-labelledby="title">
+  <title id="title">Koshishein</title>
+  <defs>
+    <linearGradient id="wordmark-gradient" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#3f251c"/>
+      <stop offset="42%" stop-color="#71442d"/>
+      <stop offset="70%" stop-color="#a36a43"/>
+      <stop offset="100%" stop-color="#4d2f23"/>
+    </linearGradient>
+  </defs>
+  <text x="18" y="48" fill="url(#wordmark-gradient)" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="500" letter-spacing="8.6">KOSHISHEIN</text>
+  <path d="M8 34C60 10 112 10 164 34S268 58 320 34S424 10 476 34S520 51 552 34" fill="none" stroke="#78482f" stroke-linecap="round" stroke-width="2.4" opacity=".82"/>
+</svg>

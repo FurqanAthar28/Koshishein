@@ -20,12 +20,6 @@ export default function Hero() {
             own watch for custom engraving and personalization.
           </p>
 
-          <div className="hero-price">
-            <span>Engraving from</span>
-            <strong>PKR {siteConfig.engravingPrice}</strong>
-            <span>per watch</span>
-          </div>
-
           <div className="hero-actions">
             <a
               href={`https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(
@@ -48,17 +42,13 @@ export default function Hero() {
         <div className="hero-image-wrapper">
           <div className="hero-image">
             <Image
-              src="/images/hero-watch.jpg"
-              alt="Koshishein signature steel watch"
+              src="/images/tactical_watch_storyboard.gif"
+              alt="Koshishein tactical pilot watch"
               fill
               priority
+              unoptimized
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-          </div>
-
-          <div className="hero-image-label">
-            <span>Koshishein</span>
-            <small>WATCHES</small>
           </div>
         </div>
       </div>

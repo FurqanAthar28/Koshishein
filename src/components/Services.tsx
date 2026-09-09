@@ -6,7 +6,7 @@ const services = [
     title: "Engraving & Personalization",
     description:
       "Send us your own watch and we will engrave it with the design or text you choose, with careful, precise finishing.",
-    price: "PKR 500 / watch",
+    price: "Custom engraving",
   },
   {
     number: "02",

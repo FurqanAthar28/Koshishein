@@ -60,7 +60,7 @@ export default function HowItWorks() {
         </div>
 
         <div className="how-it-works-note">
-          <strong>Custom engraving: PKR 500 per watch.</strong>
+          <strong>Custom engraving available.</strong>
           <span>
             Delivery charges are separate.
           </span>
