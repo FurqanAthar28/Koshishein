@@ -502,6 +502,30 @@ p {
 
 /* Price */
 
+.price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 4px 8px;
+  flex-shrink: 0;
+}
+
+.price-original {
+  color: rgba(28, 28, 28, 0.45);
+  font-size: 0.85em;
+  font-weight: 400;
+  text-decoration: line-through;
+}
+
+.catalog-product-price {
+  justify-content: flex-start;
+}
+
+.catalog-product-price strong {
+  font-weight: 400;
+}
+
 .hero-price {
   display: flex;
   align-items: baseline;
@@ -2180,7 +2204,7 @@ p {
 }
 
 .catalog-product-price {
-  display: block;
+  display: flex;
   margin-bottom: 28px;
   color: var(--color-brown);
   font-family: Georgia, "Times New Roman", serif;

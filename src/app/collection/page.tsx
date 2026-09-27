@@ -5,6 +5,7 @@ import {
   everydayClassics,
 } from "@/data/collection";
 import siteConfig from "@/data/siteConfig";
+import Price from "@/components/Price";
 
 export default function CollectionPage() {
   return (
@@ -128,7 +129,7 @@ export default function CollectionPage() {
                     <p>{product.description}</p>
                   </div>
 
-                  <strong>PKR {product.price.toLocaleString()}</strong>
+                  <Price price={product.price} originalPrice={product.originalPrice} />
                 </div>
 
                 <Link
@@ -184,7 +185,7 @@ export default function CollectionPage() {
                     <p>{product.description}</p>
                   </div>
 
-                  <strong>PKR {product.price.toLocaleString()}</strong>
+                  <Price price={product.price} originalPrice={product.originalPrice} />
                 </div>
 
                 <Link

@@ -6,6 +6,7 @@ import {
   everydayClassics,
 } from "@/data/collection";
 import siteConfig from "@/data/siteConfig";
+import Price from "@/components/Price";
 
 type CatalogPageProps = {
   searchParams: Promise<{
@@ -69,9 +70,11 @@ export default async function CatalogPage({
 
                 <h2>{selectedProduct.name}</h2>
 
-                <strong className="catalog-product-price">
-                  PKR {selectedProduct.price.toLocaleString()}
-                </strong>
+                <Price
+                  className="catalog-product-price"
+                  price={selectedProduct.price}
+                  originalPrice={selectedProduct.originalPrice}
+                />
 
                 <p className="catalog-product-description">
                   {selectedProduct.description}
@@ -88,7 +91,7 @@ export default async function CatalogPage({
 
                 <Link
                   href={`https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(
-                    `Assalamualaikum, I want to order ${selectedProduct.name}. Price: PKR ${selectedProduct.price.toLocaleString()}`
+                    `Assalamualaikum, I want to order ${selectedProduct.name}. Price: PKR ${selectedProduct.price.toLocaleString()} (was PKR ${selectedProduct.originalPrice.toLocaleString()})`
                   )}`}
                   className="primary-button"
                   target="_blank"
@@ -142,9 +145,10 @@ export default async function CatalogPage({
                       <p>{product.description}</p>
                     </div>
 
-                    <strong>
-                      PKR {product.price.toLocaleString()}
-                    </strong>
+                    <Price
+                      price={product.price}
+                      originalPrice={product.originalPrice}
+                    />
                   </div>
 
                   <Link
