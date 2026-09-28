@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 import {
-  signatureCollection,
-  everydayClassics,
-} from "@/data/collection";
+  formatPrice,
+  getAllProducts,
+} from "@/lib/shopify";
 import siteConfig from "@/data/siteConfig";
 
 type CatalogPageProps = {
@@ -19,13 +19,10 @@ export default async function CatalogPage({
   const params = await searchParams;
   const selectedProductId = params.product;
 
-  const products = [
-    ...signatureCollection,
-    ...everydayClassics,
-  ];
+  const products = await getAllProducts();
 
   const selectedProduct = selectedProductId
-    ? products.find((product) => String(product.id) === selectedProductId)
+    ? products.find((product) => product.id === selectedProductId)
     : null;
 
   return (
@@ -70,7 +67,7 @@ export default async function CatalogPage({
                 <h2>{selectedProduct.name}</h2>
 
                 <strong className="catalog-product-price">
-                  PKR {selectedProduct.price.toLocaleString()}
+                  {formatPrice(selectedProduct)}
                 </strong>
 
                 <p className="catalog-product-description">
@@ -88,7 +85,7 @@ export default async function CatalogPage({
 
                 <Link
                   href={`https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(
-                    `Assalamualaikum, I want to order ${selectedProduct.name}. Price: PKR ${selectedProduct.price.toLocaleString()}`
+                    `Assalamualaikum, I want to order ${selectedProduct.name}. Price: ${formatPrice(selectedProduct)}`
                   )}`}
                   className="primary-button"
                   target="_blank"
@@ -124,7 +121,7 @@ export default async function CatalogPage({
               {products.map((product) => (
                 <article className="catalog-card" key={product.id}>
                   <Link
-                    href={`/catalog?product=${product.id}`}
+                    href={`/catalog?product=${encodeURIComponent(product.id)}`}
                     className="catalog-card-image"
                   >
                     <Image
@@ -143,12 +140,12 @@ export default async function CatalogPage({
                     </div>
 
                     <strong>
-                      PKR {product.price.toLocaleString()}
+                      {formatPrice(product)}
                     </strong>
                   </div>
 
                   <Link
-                    href={`/catalog?product=${product.id}`}
+                    href={`/catalog?product=${encodeURIComponent(product.id)}`}
                     className="catalog-card-link"
                   >
                     View Details

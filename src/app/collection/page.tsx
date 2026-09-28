@@ -1,12 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  signatureCollection,
-  everydayClassics,
-} from "@/data/collection";
+  formatPrice,
+  getEverydayClassics,
+  getSignatureCollection,
+} from "@/lib/shopify";
 import siteConfig from "@/data/siteConfig";
 
-export default function CollectionPage() {
+// Refresh Shopify products every 5 minutes.
+export const revalidate = 300;
+
+export default async function CollectionPage() {
+  const [signatureCollection, everydayClassics] = await Promise.all([
+    getSignatureCollection(),
+    getEverydayClassics(),
+  ]);
+
   return (
     <main>
       {/* Page Banner */}
@@ -111,7 +120,7 @@ export default function CollectionPage() {
             {signatureCollection.map((product) => (
               <article className="collection-product-card" key={product.id}>
                 <Link
-                  href={`/catalog?product=${product.id}`}
+                  href={`/catalog?product=${encodeURIComponent(product.id)}`}
                   className="collection-product-image"
                 >
                   <Image
@@ -128,11 +137,11 @@ export default function CollectionPage() {
                     <p>{product.description}</p>
                   </div>
 
-                  <strong>PKR {product.price.toLocaleString()}</strong>
+                  <strong>{formatPrice(product)}</strong>
                 </div>
 
                 <Link
-                  href={`/catalog?product=${product.id}`}
+                  href={`/catalog?product=${encodeURIComponent(product.id)}`}
                   className="product-order-link"
                 >
                   View & Order
@@ -167,7 +176,7 @@ export default function CollectionPage() {
             {everydayClassics.map((product) => (
               <article className="collection-product-card" key={product.id}>
                 <Link
-                  href={`/catalog?product=${product.id}`}
+                  href={`/catalog?product=${encodeURIComponent(product.id)}`}
                   className="collection-product-image"
                 >
                   <Image
@@ -184,11 +193,11 @@ export default function CollectionPage() {
                     <p>{product.description}</p>
                   </div>
 
-                  <strong>PKR {product.price.toLocaleString()}</strong>
+                  <strong>{formatPrice(product)}</strong>
                 </div>
 
                 <Link
-                  href={`/catalog?product=${product.id}`}
+                  href={`/catalog?product=${encodeURIComponent(product.id)}`}
                   className="product-order-link"
                 >
                   View & Order
