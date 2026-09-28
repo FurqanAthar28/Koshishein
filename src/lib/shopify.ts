@@ -16,7 +16,10 @@ export type Product = {
   id: string;
   name: string;
   image: string;
+  images: { url: string; alt: string }[];
   price: number;
+  // Pre-discount price ("Compare-at price" in Shopify), when the product is on sale.
+  originalPrice?: number;
   currency: string;
   summary: string;
   descriptionHtml: string;
@@ -28,7 +31,9 @@ type ShopifyProductNode = {
   description: string;
   descriptionHtml: string;
   featuredImage: { url: string } | null;
+  images: { nodes: { url: string; altText: string | null }[] };
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
+  compareAtPriceRange: { minVariantPrice: { amount: string } };
 };
 
 const PRODUCT_FIELDS = `
@@ -37,7 +42,9 @@ const PRODUCT_FIELDS = `
   description
   descriptionHtml
   featuredImage { url }
+  images(first: 10) { nodes { url altText } }
   priceRange { minVariantPrice { amount currencyCode } }
+  compareAtPriceRange { minVariantPrice { amount } }
 `;
 
 async function shopifyFetch<T>(
@@ -82,11 +89,18 @@ function toSummary(node: ShopifyProductNode) {
 
 function toProduct(node: ShopifyProductNode): Product {
   const { amount, currencyCode } = node.priceRange.minVariantPrice;
+  const price = Number(amount);
+  const compareAt = Number(node.compareAtPriceRange.minVariantPrice.amount);
   return {
     id: node.handle,
     name: node.title,
     image: node.featuredImage?.url ?? "/images/hero-watch.jpg",
-    price: Number(amount),
+    images: node.images.nodes.map((image) => ({
+      url: image.url,
+      alt: image.altText ?? node.title,
+    })),
+    price,
+    originalPrice: compareAt > price ? compareAt : undefined,
     currency: currencyCode,
     summary: toSummary(node),
     descriptionHtml: node.descriptionHtml,
@@ -147,6 +161,15 @@ export async function getCollectionSections() {
   return { signature, everyday };
 }
 
+export function formatAmount(product: Product, amount: number) {
+  return `${product.currency} ${amount.toLocaleString()}`;
+}
+
 export function formatPrice(product: Product) {
-  return `${product.currency} ${product.price.toLocaleString()}`;
+  return formatAmount(product, product.price);
+}
+
+export function discountPercent(product: Product) {
+  if (!product.originalPrice) return 0;
+  return Math.round((1 - product.price / product.originalPrice) * 100);
 }

@@ -502,6 +502,32 @@ p {
 
 /* Price */
 
+/* Product price: discount badge, struck-through original, sale price */
+.price {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  align-items: flex-end;
+  gap: 3px;
+  text-align: right;
+}
+
+.price-badge {
+  padding: 2px 7px;
+  border-radius: 2px;
+  background: var(--color-brown);
+  color: var(--color-cream);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+.price-original {
+  color: rgba(28, 28, 28, 0.45);
+  font-size: 11px;
+}
+
 .hero-price {
   display: flex;
   align-items: baseline;
@@ -2167,6 +2193,38 @@ p {
   object-fit: cover;
 }
 
+.catalog-product-thumbs {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.catalog-product-thumb {
+  position: relative;
+  width: 84px;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-light);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.catalog-product-thumb:hover,
+.catalog-product-thumb[aria-current="true"] {
+  opacity: 1;
+}
+
+.catalog-product-thumb[aria-current="true"] {
+  border-color: var(--color-brown);
+}
+
+.catalog-product-thumb img {
+  object-fit: cover;
+}
+
 .catalog-product-content {
   max-width: 520px;
 }
@@ -2180,11 +2238,27 @@ p {
 }
 
 .catalog-product-price {
-  display: block;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
   margin-bottom: 28px;
   color: var(--color-brown);
   font-family: Georgia, "Times New Roman", serif;
   font-size: 30px;
+  font-weight: 400;
+}
+
+.catalog-product-price .price-badge {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.catalog-product-price .price-original {
+  font-size: 20px;
+}
+
+.catalog-product-price strong {
   font-weight: 400;
 }
 

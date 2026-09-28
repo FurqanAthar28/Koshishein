@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  formatPrice,
   getCollectionSections,
 } from "@/lib/shopify";
 import siteConfig from "@/data/siteConfig";
+import Price from "@/components/Price";
 
 // Refresh Shopify products every 5 minutes.
 export const revalidate = 300;
@@ -134,7 +134,7 @@ export default async function CollectionPage() {
                     <p>{product.summary}</p>
                   </div>
 
-                  <strong>{formatPrice(product)}</strong>
+                  <Price product={product} />
                 </div>
 
                 <Link
@@ -191,7 +191,7 @@ export default async function CollectionPage() {
                       <p>{product.summary}</p>
                     </div>
 
-                    <strong>{formatPrice(product)}</strong>
+                    <Price product={product} />
                   </div>
 
                   <Link

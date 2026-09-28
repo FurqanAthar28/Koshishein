@@ -2,11 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 import {
+  formatAmount,
   formatPrice,
   getAllProducts,
   getProduct,
 } from "@/lib/shopify";
 import siteConfig from "@/data/siteConfig";
+import Price from "@/components/Price";
+import ProductGallery from "@/components/ProductGallery";
 
 type CatalogPageProps = {
   searchParams: Promise<{
@@ -51,24 +54,23 @@ export default async function CatalogPage({
             </Link>
 
             <div className="catalog-product-detail">
-              <div className="catalog-product-image">
-                <Image
-                  src={selectedProduct.image}
-                  alt={selectedProduct.name}
-                  fill
-                  priority
-                  sizes="(max-width: 900px) 100vw, 55vw"
-                />
-              </div>
+              <ProductGallery
+                images={
+                  selectedProduct.images.length > 0
+                    ? selectedProduct.images
+                    : [{ url: selectedProduct.image, alt: selectedProduct.name }]
+                }
+              />
 
               <div className="catalog-product-content">
                 <p className="section-eyebrow">KOSHISHEIN</p>
 
                 <h2>{selectedProduct.name}</h2>
 
-                <strong className="catalog-product-price">
-                  {formatPrice(selectedProduct)}
-                </strong>
+                <Price
+                  className="catalog-product-price"
+                  product={selectedProduct}
+                />
 
                 {/* Formatted description written in the Shopify admin. */}
                 <div
@@ -89,7 +91,11 @@ export default async function CatalogPage({
 
                 <Link
                   href={`https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(
-                    `Assalamualaikum, I want to order ${selectedProduct.name}. Price: ${formatPrice(selectedProduct)}`
+                    `Assalamualaikum, I want to order ${selectedProduct.name}. Price: ${formatPrice(selectedProduct)}${
+                      selectedProduct.originalPrice
+                        ? ` (was ${formatAmount(selectedProduct, selectedProduct.originalPrice)})`
+                        : ""
+                    }`
                   )}`}
                   className="primary-button"
                   target="_blank"
@@ -143,9 +149,7 @@ export default async function CatalogPage({
                       <p>{product.summary}</p>
                     </div>
 
-                    <strong>
-                      {formatPrice(product)}
-                    </strong>
+                    <Price product={product} />
                   </div>
 
                   <Link
