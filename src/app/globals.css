@@ -2339,3 +2339,25 @@ p {
     font-size: 42px;
   }
 }
+
+/* Shopify product description (rendered from descriptionHtml) */
+.catalog-product-description > :first-child {
+  margin-top: 0;
+}
+
+.catalog-product-description h2,
+.catalog-product-description h3 {
+  margin: 22px 0 8px;
+  color: #1c1c1c;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.catalog-product-description p {
+  margin: 0 0 14px;
+}
+
+.catalog-product-description ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}

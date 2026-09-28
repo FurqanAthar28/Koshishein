@@ -2,8 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   formatPrice,
-  getEverydayClassics,
-  getSignatureCollection,
+  getCollectionSections,
 } from "@/lib/shopify";
 import siteConfig from "@/data/siteConfig";
 
@@ -11,10 +10,8 @@ import siteConfig from "@/data/siteConfig";
 export const revalidate = 300;
 
 export default async function CollectionPage() {
-  const [signatureCollection, everydayClassics] = await Promise.all([
-    getSignatureCollection(),
-    getEverydayClassics(),
-  ]);
+  const { signature: signatureCollection, everyday: everydayClassics } =
+    await getCollectionSections();
 
   return (
     <main>
@@ -134,7 +131,7 @@ export default async function CollectionPage() {
                 <div className="collection-product-info">
                   <div>
                     <h3>{product.name}</h3>
-                    <p>{product.description}</p>
+                    <p>{product.summary}</p>
                   </div>
 
                   <strong>{formatPrice(product)}</strong>
@@ -154,60 +151,62 @@ export default async function CollectionPage() {
       </section>
 
       {/* Everyday Classics */}
-      <section className="collection-section plain-section">
-        <div className="container">
-          <div className="collection-heading">
-            <div>
-              <p className="section-eyebrow">EVERYDAY CLASSICS</p>
+      {everydayClassics.length > 0 && (
+        <section className="collection-section plain-section">
+          <div className="container">
+            <div className="collection-heading">
+              <div>
+                <p className="section-eyebrow">EVERYDAY CLASSICS</p>
 
-              <h2>
-                Simple.
-                <span>Elegant. Everyday.</span>
-              </h2>
+                <h2>
+                  Simple.
+                  <span>Elegant. Everyday.</span>
+                </h2>
+              </div>
+
+              <p>
+                Comfortable everyday watches designed for daily use, with the
+                neat finishing Koshishein is known for.
+              </p>
             </div>
 
-            <p>
-              Comfortable everyday watches designed for daily use, with the
-              neat finishing Koshishein is known for.
-            </p>
-          </div>
+            <div className="collection-product-grid">
+              {everydayClassics.map((product) => (
+                <article className="collection-product-card" key={product.id}>
+                  <Link
+                    href={`/catalog?product=${encodeURIComponent(product.id)}`}
+                    className="collection-product-image"
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                    />
+                  </Link>
 
-          <div className="collection-product-grid">
-            {everydayClassics.map((product) => (
-              <article className="collection-product-card" key={product.id}>
-                <Link
-                  href={`/catalog?product=${encodeURIComponent(product.id)}`}
-                  className="collection-product-image"
-                >
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                  />
-                </Link>
+                  <div className="collection-product-info">
+                    <div>
+                      <h3>{product.name}</h3>
+                      <p>{product.summary}</p>
+                    </div>
 
-                <div className="collection-product-info">
-                  <div>
-                    <h3>{product.name}</h3>
-                    <p>{product.description}</p>
+                    <strong>{formatPrice(product)}</strong>
                   </div>
 
-                  <strong>{formatPrice(product)}</strong>
-                </div>
-
-                <Link
-                  href={`/catalog?product=${encodeURIComponent(product.id)}`}
-                  className="product-order-link"
-                >
-                  View & Order
-                  <span>→</span>
-                </Link>
-              </article>
-            ))}
+                  <Link
+                    href={`/catalog?product=${encodeURIComponent(product.id)}`}
+                    className="product-order-link"
+                  >
+                    View & Order
+                    <span>→</span>
+                  </Link>
+                </article>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </main>
   );
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   formatPrice,
   getAllProducts,
+  getProduct,
 } from "@/lib/shopify";
 import siteConfig from "@/data/siteConfig";
 
@@ -19,11 +20,10 @@ export default async function CatalogPage({
   const params = await searchParams;
   const selectedProductId = params.product;
 
-  const products = await getAllProducts();
-
   const selectedProduct = selectedProductId
-    ? products.find((product) => product.id === selectedProductId)
+    ? await getProduct(selectedProductId)
     : null;
+  const products = selectedProduct ? [] : await getAllProducts();
 
   return (
     <main>
@@ -70,9 +70,13 @@ export default async function CatalogPage({
                   {formatPrice(selectedProduct)}
                 </strong>
 
-                <p className="catalog-product-description">
-                  {selectedProduct.description}
-                </p>
+                {/* Formatted description written in the Shopify admin. */}
+                <div
+                  className="catalog-product-description"
+                  dangerouslySetInnerHTML={{
+                    __html: selectedProduct.descriptionHtml,
+                  }}
+                />
 
                 <div className="catalog-product-note">
                   <strong>Ordering Information</strong>
@@ -136,7 +140,7 @@ export default async function CatalogPage({
                     <div>
                       <h3>{product.name}</h3>
 
-                      <p>{product.description}</p>
+                      <p>{product.summary}</p>
                     </div>
 
                     <strong>

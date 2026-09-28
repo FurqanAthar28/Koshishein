@@ -1,29 +1,33 @@
-import {
-  signatureCollection as fallbackSignature,
-  everydayClassics as fallbackEveryday,
-  type CollectionProduct,
-} from "@/data/collection";
-
-const domain = process.env.SHOPIFY_STORE_DOMAIN;
+const domain = process.env.SHOPIFY_STORE_DOMAIN ?? "0ws15g-k8.myshopify.com";
+// Optional: product and collection data can be read tokenlessly.
 const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 const apiVersion = process.env.SHOPIFY_API_VERSION ?? "2026-07";
 
-// Shopify collection handles that feed each section of the site.
-export const SIGNATURE_HANDLE =
+// Shopify collection handles that feed each section of the collection page.
+const SIGNATURE_HANDLE =
   process.env.SHOPIFY_SIGNATURE_COLLECTION ?? "signature-collection";
-export const EVERYDAY_HANDLE =
+const EVERYDAY_HANDLE =
   process.env.SHOPIFY_EVERYDAY_COLLECTION ?? "everyday-classics";
 
 // Re-fetch product data from Shopify at most every 5 minutes.
 const REVALIDATE_SECONDS = 300;
 
-export const isShopifyConfigured = Boolean(domain && token);
+export type Product = {
+  id: string;
+  name: string;
+  image: string;
+  price: number;
+  currency: string;
+  summary: string;
+  descriptionHtml: string;
+};
 
 type ShopifyProductNode = {
   handle: string;
   title: string;
   description: string;
-  featuredImage: { url: string; altText: string | null } | null;
+  descriptionHtml: string;
+  featuredImage: { url: string } | null;
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
 };
 
@@ -31,7 +35,8 @@ const PRODUCT_FIELDS = `
   handle
   title
   description
-  featuredImage { url altText }
+  descriptionHtml
+  featuredImage { url }
   priceRange { minVariantPrice { amount currencyCode } }
 `;
 
@@ -39,14 +44,16 @@ async function shopifyFetch<T>(
   query: string,
   variables: Record<string, unknown> = {}
 ): Promise<T> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) headers["X-Shopify-Storefront-Access-Token"] = token;
+
   const res = await fetch(
     `https://${domain}/api/${apiVersion}/graphql.json`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": token!,
-      },
+      headers,
       body: JSON.stringify({ query, variables }),
       cache: "force-cache",
       next: { revalidate: REVALIDATE_SECONDS, tags: ["shopify"] },
@@ -62,10 +69,18 @@ async function shopifyFetch<T>(
   return json.data as T;
 }
 
-function toProduct(
-  node: ShopifyProductNode,
-  category: CollectionProduct["category"]
-): CollectionProduct {
+// Card text: the first paragraph of the description, trimmed to a sentence or two.
+function toSummary(node: ShopifyProductNode) {
+  const firstParagraph = node.descriptionHtml.match(/<p>([\s\S]*?)<\/p>/)?.[1];
+  const text = (firstParagraph ?? node.description)
+    .replace(/<[^>]+>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length <= 160) return text;
+  return `${text.slice(0, 160).replace(/\s+\S*$/, "")}…`;
+}
+
+function toProduct(node: ShopifyProductNode): Product {
   const { amount, currencyCode } = node.priceRange.minVariantPrice;
   return {
     id: node.handle,
@@ -73,21 +88,12 @@ function toProduct(
     image: node.featuredImage?.url ?? "/images/hero-watch.jpg",
     price: Number(amount),
     currency: currencyCode,
-    description: node.description,
-    category,
+    summary: toSummary(node),
+    descriptionHtml: node.descriptionHtml,
   };
 }
 
-export async function getCollectionProducts(
-  handle: string,
-  category: CollectionProduct["category"]
-): Promise<CollectionProduct[]> {
-  if (!isShopifyConfigured) {
-    return category === "Signature Collection"
-      ? fallbackSignature
-      : fallbackEveryday;
-  }
-
+async function getCollectionProducts(handle: string): Promise<Product[]> {
   const data = await shopifyFetch<{
     collection: { products: { nodes: ShopifyProductNode[] } } | null;
   }>(
@@ -99,34 +105,48 @@ export async function getCollectionProducts(
     { handle }
   );
 
-  return (data.collection?.products.nodes ?? []).map((node) =>
-    toProduct(node, category)
+  return (data.collection?.products.nodes ?? []).map(toProduct);
+}
+
+export async function getAllProducts(): Promise<Product[]> {
+  const data = await shopifyFetch<{
+    products: { nodes: ShopifyProductNode[] };
+  }>(
+    `query AllProducts {
+      products(first: 250, sortKey: CREATED_AT, reverse: true) {
+        nodes { ${PRODUCT_FIELDS} }
+      }
+    }`
   );
+
+  return data.products.nodes.map(toProduct);
 }
 
-export async function getSignatureCollection() {
-  return getCollectionProducts(SIGNATURE_HANDLE, "Signature Collection");
+export async function getProduct(handle: string): Promise<Product | null> {
+  const data = await shopifyFetch<{ product: ShopifyProductNode | null }>(
+    `query Product($handle: String!) {
+      product(handle: $handle) { ${PRODUCT_FIELDS} }
+    }`,
+    { handle }
+  );
+
+  return data.product ? toProduct(data.product) : null;
 }
 
-export async function getEverydayClassics() {
-  return getCollectionProducts(EVERYDAY_HANDLE, "Everyday Classics");
-}
-
-export async function getAllProducts(): Promise<CollectionProduct[]> {
+// Until the signature/everyday collections exist in Shopify, show every
+// product under the signature section so the page is never empty.
+export async function getCollectionSections() {
   const [signature, everyday] = await Promise.all([
-    getSignatureCollection(),
-    getEverydayClassics(),
+    getCollectionProducts(SIGNATURE_HANDLE),
+    getCollectionProducts(EVERYDAY_HANDLE),
   ]);
 
-  // A product can sit in both collections; show it once.
-  const seen = new Set<string>();
-  return [...signature, ...everyday].filter((product) => {
-    if (seen.has(product.id)) return false;
-    seen.add(product.id);
-    return true;
-  });
+  if (signature.length === 0 && everyday.length === 0) {
+    return { signature: await getAllProducts(), everyday: [] };
+  }
+  return { signature, everyday };
 }
 
-export function formatPrice(product: CollectionProduct) {
+export function formatPrice(product: Product) {
   return `${product.currency} ${product.price.toLocaleString()}`;
 }
