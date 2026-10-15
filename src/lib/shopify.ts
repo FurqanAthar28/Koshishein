@@ -12,12 +12,6 @@ const EVERYDAY_HANDLE =
 // Re-fetch product data from Shopify at most every 5 minutes.
 const REVALIDATE_SECONDS = 300;
 
-// Local photos that replace a product's main Shopify image, keyed by handle.
-const FEATURED_IMAGE_OVERRIDES: Record<string, string> = {
-  "koshishein-shadow-square-all-black-square-case-watch":
-    "/images/products/shadow-square-portrait.jpg",
-};
-
 export type Product = {
   id: string;
   name: string;
@@ -98,13 +92,12 @@ function toProduct(node: ShopifyProductNode): Product {
   const price = Number(amount);
   const compareAt = Number(node.compareAtPriceRange.minVariantPrice.amount);
   const featuredUrl = node.featuredImage?.url;
-  const override = FEATURED_IMAGE_OVERRIDES[node.handle];
   return {
     id: node.handle,
     name: node.title,
-    image: override ?? featuredUrl ?? "/images/hero-watch.jpg",
+    image: featuredUrl ?? "/images/hero-watch.jpg",
     images: node.images.nodes.map((image) => ({
-      url: override && image.url === featuredUrl ? override : image.url,
+      url: image.url,
       alt: image.altText ?? node.title,
     })),
     price,
