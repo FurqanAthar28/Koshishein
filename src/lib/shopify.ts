@@ -15,7 +15,7 @@ const REVALIDATE_SECONDS = 300;
 // Local photos that replace a product's main Shopify image, keyed by handle.
 const FEATURED_IMAGE_OVERRIDES: Record<string, string> = {
   "koshishein-shadow-square-all-black-square-case-watch":
-    "/images/products/shadow-square.jpg",
+    "/images/products/shadow-square-portrait.jpg",
 };
 
 export type Product = {
